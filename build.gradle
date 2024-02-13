@@ -33,6 +33,7 @@ dependencies {
     // silkmc
     modImplementation include("net.silkmc:silk-core:${project.silk_version}")
     modImplementation include("net.silkmc:silk-game:${project.silk_version}")
+
 }
 
 processResources {
@@ -84,13 +85,14 @@ publishing {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/lolieg/trackingshot")
             credentials {
-                username = System.getenv("USERNAME")
-                password = System.getenv("TOKEN")
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
             }
         }
     }
     publications {
         gpr(MavenPublication) {
+            artifactId = "trackingshot"
             from(components.java)
         }
     }

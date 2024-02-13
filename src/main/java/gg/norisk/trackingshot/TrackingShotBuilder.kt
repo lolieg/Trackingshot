@@ -38,11 +38,11 @@ class TrackingShotBuilder(val autoClose: Boolean = true) {
 
 
         @SegmentDsl
-        internal fun normalCamera() {
+        fun normalCamera() {
             animations.add(NonAnimatable { TrackingShotClient.trackingShot?.cameraEntity?.mode = FreeCamera.CameraModes.CAMERA_NORMAL })
         }
         @SegmentDsl
-        internal fun orthoCamera() {
+        fun orthoCamera() {
             animations.add(NonAnimatable { TrackingShotClient.trackingShot?.cameraEntity?.mode = FreeCamera.CameraModes.CAMERA_ORTHOGRAPHIC })
         }
 
