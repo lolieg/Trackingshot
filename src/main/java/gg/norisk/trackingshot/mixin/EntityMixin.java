@@ -1,43 +1,26 @@
-package gg.norisk.hglobby.mixin.client;
+package gg.norisk.trackingshot.mixin;
 
-import gg.norisk.hglobby.client.HglobbyClient;
+import gg.norisk.trackingshot.freecam.FreeCamera;
+import gg.norisk.trackingshot.utils;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.math.Vec3d;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Entity.class)
-public class EntityMixinClient {
-
-    @ModifyVariable(method = "changeLookDirection", at = @At("HEAD"), ordinal = 0, argsOnly = true)
-    private double cursorDeltaX(double value){
-        if(HglobbyClient.Companion.getCurrentCameraAnimation() != null && !HglobbyClient.Companion.getCurrentCameraAnimation().isDone()) {
-            return 0.0;
-        }
-        return value;
-    }
-    @ModifyVariable(method = "changeLookDirection", at = @At("HEAD"), ordinal = 1, argsOnly = true)
-    private double cursorDeltaY(double value){
-        if(HglobbyClient.Companion.getInNavigation()) {
-            return 0.0;
-        }
-        return value;
-    }
-
-    @Inject(method = "movementInputToVelocity", at = @At("HEAD"), cancellable = true)
-    private static void movement(Vec3d movementInput, float speed, float yaw, CallbackInfoReturnable<Vec3d> cir) {
-        if(HglobbyClient.Companion.getInNavigation()) {
-            cir.setReturnValue(Vec3d.ZERO);
+public abstract class EntityMixin {
+    @Inject(method = "changeLookDirection", at = @At("HEAD"), cancellable = true)
+    private void onChangeLookDirection(double x, double y, CallbackInfo ci) {
+        FreeCamera camera = utils.INSTANCE.getFreeCamera();
+        if (camera != null && this.equals(MinecraftClient.getInstance().player)) {
+            camera.changeLookDirection(x, y);
+            ci.cancel();
         }
     }
 
-    @Inject(method = "getJumpVelocityMultiplier", at = @At("HEAD"), cancellable = true)
-    private void jump(CallbackInfoReturnable<Float> cir) {
-        if(HglobbyClient.Companion.getInNavigation()) {
-            cir.setReturnValue(0f);
-        }
-    }
+
+
+
 }

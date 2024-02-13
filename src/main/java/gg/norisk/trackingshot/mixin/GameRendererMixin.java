@@ -1,23 +1,24 @@
-package gg.norisk.hglobby.mixin.client;
+package gg.norisk.trackingshot.mixin;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.systems.VertexSorter;
-import gg.norisk.hglobby.client.trackingshot.CameraManager;
-import gg.norisk.hglobby.client.HglobbyClient;
+import gg.norisk.trackingshot.freecam.FreeCamera;
+import gg.norisk.trackingshot.utils;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.GameRenderer;
 import org.joml.Matrix4f;
-import org.spongepowered.asm.mixin.*;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 @Mixin(GameRenderer.class)
 public abstract class GameRendererMixin {
 
-    @Mutable
-    @Shadow @Final private Camera camera;
+
+    @Shadow public abstract MinecraftClient getClient();
 
     @ModifyArg(
             method = "renderWorld",
@@ -28,8 +29,9 @@ public abstract class GameRendererMixin {
             index = 2
     )
     private Matrix4f orthoFrustumProjMat(Matrix4f projMat) {
-        if(HglobbyClient.Companion.getCameraManager().getMode() == CameraManager.CameraModes.ORTHOGRAPHIC) {
-            return createOrthoMatrix(1.0F, 20.0F);
+        FreeCamera freeCamera = utils.INSTANCE.getFreeCamera();
+        if(freeCamera != null && freeCamera.getMode() == FreeCamera.CameraModes.CAMERA_ORTHOGRAPHIC) {
+            return createOrthoMatrix(1.0F, 20.0F, freeCamera);
         }
         return projMat;
     }
@@ -44,9 +46,9 @@ public abstract class GameRendererMixin {
             index = 7
     )
     private Matrix4f orthoProjMat(Matrix4f projMat, @Local(argsOnly = true) float tickDelta) {
-
-        if(HglobbyClient.Companion.getCameraManager().getMode() == CameraManager.CameraModes.ORTHOGRAPHIC) {
-            Matrix4f mat = createOrthoMatrix(tickDelta, 0.0F);
+        FreeCamera freeCamera = utils.INSTANCE.getFreeCamera();
+        if(freeCamera != null && freeCamera.getMode() == FreeCamera.CameraModes.CAMERA_ORTHOGRAPHIC) {
+            Matrix4f mat = createOrthoMatrix(tickDelta, 0.0F, freeCamera);
             RenderSystem.setProjectionMatrix(mat, VertexSorter.BY_DISTANCE);
             return mat;
         }
@@ -54,11 +56,15 @@ public abstract class GameRendererMixin {
     }
 
 
+
+
+
+
     @Unique
-    private static Matrix4f createOrthoMatrix(float delta, float minScale) {
+    private static Matrix4f createOrthoMatrix(float delta, float minScale, FreeCamera camera) {
         MinecraftClient client = MinecraftClient.getInstance();
-        float zoom = HglobbyClient.Companion.getCameraManager().getCurrentZoom();
-        float zNear = HglobbyClient.Companion.getCameraManager().getMinimumDistance();
+        float zoom = camera.getZoom();
+        float zNear = camera.getZNear();
         float width = Math.max(minScale, zoom
                 * client.getWindow().getFramebufferWidth() / client.getWindow().getFramebufferHeight());
         float height = Math.max(minScale, zoom);
@@ -68,4 +74,5 @@ public abstract class GameRendererMixin {
                 zNear, 1000f
         );
     }
+
 }

@@ -1,4 +1,6 @@
 package gg.norisk.trackingshot.animation
 
-class SegmentObject {
+import gg.norisk.trackingshot.GenericRunnable
+
+interface SegmentObject: GenericRunnable {
 }

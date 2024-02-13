@@ -1,4 +1,8 @@
 package gg.norisk.trackingshot
 
-class GenericRunnable {
+import kotlinx.coroutines.Job
+
+interface GenericRunnable {
+    suspend fun run(): Job?
+    fun cancel()
 }

@@ -1,41 +1,26 @@
 package gg.norisk.trackingshot.animation
 
 import it.unimi.dsi.fastutil.doubles.Double2DoubleFunction
+import net.minecraft.client.MinecraftClient
+import net.minecraft.client.network.ClientPlayerEntity
 import java.time.Duration
-import java.util.function.Supplier
 import kotlin.math.*
 
-open class Animation(start: Supplier<Float>, end: Supplier<Float>, private var dur: Duration) {
-    private val start = start.get()
-    private val end = end.get()
-    private var startTime: Long
-    private var easing = Easing.LINEAR
+open class Animation(private val startCallback: (ClientPlayerEntity) -> Float, private val endCallback: (ClientPlayerEntity) -> Float, private var dur: Duration, private val easing: Easing = Easing.LINEAR) {
+    private var start = 0f
+    private var end = 0f
+    private var startTime: Long = System.nanoTime()
     var isForward: Boolean = true
 
-    init {
-        this.startTime = System.nanoTime()
-    }
-
-    constructor(start: Supplier<Float>, end: Supplier<Float>, duration: Duration, easing: Easing) : this(
-        start,
-        end,
-        duration
-    ) {
-        this.easing = easing
-    }
-
-
     fun start() {
-        reset()
-    }
-
-    fun setDuration(dur: Duration) {
-        this.dur = dur
-    }
-
-    fun reset() {
+        val player = MinecraftClient.getInstance().player
+        if(player != null) {
+            this.start = startCallback.invoke(player)
+            this.end = endCallback.invoke(player)
+        }
         this.startTime = System.nanoTime()
     }
+
 
     fun get(): Float {
         val currentTime = System.nanoTime()
@@ -82,16 +67,16 @@ open class Animation(start: Supplier<Float>, end: Supplier<Float>, private var d
 
         ELASTIC_IN(Double2DoubleFunction { x: Double ->
             val c4 = 2 * Math.PI / 3
-            if (x == 0.0) 0.0 else if (x == 1.0) 1.0 else -2.pow(10 * x - 10) * sin((x * 10 - 10.75) * c4)
+            if (x == 0.0) 0.0 else if (x == 1.0) 1.0 else -2.0.pow(10 * x - 10) * sin((x * 10 - 10.75) * c4)
         }),
         ELASTIC_OUT(Double2DoubleFunction { x: Double ->
             val c4 = 2 * Math.PI / 3
-            if (x == 0.0) 0.0 else if (x == 1.0) 1.0 else 2.pow(-10 * x) * sin((x * 10 - 0.75) * c4) + 1
+            if (x == 0.0) 0.0 else if (x == 1.0) 1.0 else 2.0.pow(-10 * x) * sin((x * 10 - 0.75) * c4) + 1
         }),
         ELASTIC_IN_OUT(Double2DoubleFunction { x: Double ->
             val c5 = 2 * Math.PI / 4.5
             val sin = sin((20 * x - 11.125) * c5)
-            if (x == 0.0) 0.0 else if (x == 1.0) 1.0 else if (x < 0.5) -(2.pow(20 * x - 10) * sin) / 2 else 2.pow(-20 * x + 10) * sin / 2 + 1
+            if (x == 0.0) 0.0 else if (x == 1.0) 1.0 else if (x < 0.5) -(2.0.pow(20 * x - 10) * sin) / 2 else 2.0.pow(-20 * x + 10) * sin / 2 + 1
         }),
 
         QUAD_IN(Double2DoubleFunction { x: Double -> x * x }),
@@ -102,12 +87,12 @@ open class Animation(start: Supplier<Float>, end: Supplier<Float>, private var d
         QUART_OUT(Double2DoubleFunction { x: Double -> 1 - (1 - x).pow(4.0) }),
         QUART_IN_OUT(Double2DoubleFunction { x: Double -> if (x < 0.5) 8 * x * x * x * x else 1 - (-2 * x + 2).pow(4.0) / 2 }),
 
-        EXPO_IN(Double2DoubleFunction { x: Double -> if (x == 0.0) 0 else 2.pow(10 * x - 10) }),
-        EXPO_OUT(Double2DoubleFunction { x: Double -> if (x == 1.0) 1.0 else 1 - 2.pow(-10 * x) }),
+        EXPO_IN(Double2DoubleFunction { x: Double -> if (x == 0.0) 0.0 else 2.0.pow(10 * x - 10) }),
+        EXPO_OUT(Double2DoubleFunction { x: Double -> if (x == 1.0) 1.0 else 1 - 2.0.pow(-10 * x) }),
         EXPO_IN_OUT(Double2DoubleFunction { x: Double ->
-            if (x == 0.0) 0.0 else if (x == 1.0) 1.0 else if (x < 0.5) 2.pow(
+            if (x == 0.0) 0.0 else if (x == 1.0) 1.0 else if (x < 0.5) 2.0.pow(
                 20 * x - 10
-            ) / 2 else (2 - 2.pow(-20 * x + 10)) / 2
+            ) / 2 else (2 - 2.0.pow(-20 * x + 10)) / 2
         }),
 
         BACK_IN(Double2DoubleFunction { x: Double ->

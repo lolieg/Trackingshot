@@ -1,14 +1,12 @@
-package gg.norisk.trackingshot
+package gg.norisk.trackingshot.segments
 
-import gg.norisk.trackingshot.animation.CameraAnimation
-import kotlinx.coroutines.Runnable
+import gg.norisk.trackingshot.GenericRunnable
+import gg.norisk.trackingshot.animation.SegmentObject
+import kotlinx.coroutines.Job
 
-class Segment(
-    val position: Int
-    ) : Runnable {
-    val animations: MutableList<CameraAnimation> = mutableListOf()
+interface Segment : GenericRunnable {
+    val segmentObjects: MutableList<SegmentObject>
+    val jobs: MutableList<Job>
+    fun isDone(): Boolean
 
-    override fun run() {
-        TODO("Not yet implemented")
-    }
 }
