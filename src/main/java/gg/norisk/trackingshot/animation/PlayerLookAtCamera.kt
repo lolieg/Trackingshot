@@ -2,6 +2,7 @@ package gg.norisk.trackingshot.animation
 
 import gg.norisk.trackingshot.utils.getFreeCamera
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import net.minecraft.client.network.ClientPlayerEntity
@@ -9,6 +10,7 @@ import net.minecraft.command.argument.EntityAnchorArgumentType
 import net.silkmc.silk.core.annotations.DelicateSilkApi
 import net.silkmc.silk.core.task.silkCoroutineScope
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.toJavaDuration
 
 class PlayerLookAtCamera(val player: ClientPlayerEntity, val duration: Duration): SegmentObject {
@@ -20,6 +22,7 @@ class PlayerLookAtCamera(val player: ClientPlayerEntity, val duration: Duration)
             while (duration.toJavaDuration().toNanos() > System.nanoTime() - startTime) {
                 yield()
                 player.lookAt(EntityAnchorArgumentType.EntityAnchor.EYES, camera.eyePos)
+                delay(10.milliseconds)
             }
         }
     }

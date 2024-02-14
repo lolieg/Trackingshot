@@ -53,6 +53,7 @@ class TrackingShot(val segments: MutableList<Segment>, val autoClose: Boolean) {
     }
 
     private fun onStart(player: ClientPlayerEntity) {
+        MinecraftClient.getInstance().worldRenderer.chunkBuilder.cameraPosition
         MinecraftClient.getInstance().chunkCullingEnabled = false
         cameraEntity = FreeCamera(-420)
         cameraEntity!!.setPosition(player.pos)
