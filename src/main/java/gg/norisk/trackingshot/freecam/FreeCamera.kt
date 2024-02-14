@@ -8,6 +8,7 @@ import net.minecraft.client.network.ClientPlayerEntity
 import net.minecraft.entity.EntityPose
 import net.minecraft.registry.DynamicRegistryManager
 import net.minecraft.resource.featuretoggle.FeatureSet
+import net.minecraft.world.entity.EntityChangeListener
 import java.util.*
 
 class FreeCamera(id: Int) : ClientPlayerEntity(
@@ -51,6 +52,8 @@ class FreeCamera(id: Int) : ClientPlayerEntity(
     fun spawn() {
         if (clientWorld != null) {
             clientWorld.addEntity(this)
+            // this caused me hours of pain.
+            this.setChangeListener(EntityChangeListener.NONE)
         }
     }
 
@@ -66,13 +69,17 @@ class FreeCamera(id: Int) : ClientPlayerEntity(
     }
 
     fun setX(value: Double) {
-        this.setPos(value, y, z)
+        this.setPosition(value, y, z)
     }
     fun setY(value: Double) {
-        this.setPos(x, value, z)
+        this.setPosition(x, value, z)
     }
     fun setZ(value: Double) {
-        this.setPos(x, y, value)
+        this.setPosition(x, y, value)
+    }
+
+    override fun setPosition(x: Double, y: Double, z: Double) {
+        this.setPos(x, y, z)
     }
 
     enum class CameraValueType{
