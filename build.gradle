@@ -2,6 +2,7 @@ plugins {
     id 'fabric-loom' version '1.5-SNAPSHOT'
     id 'maven-publish'
     id 'org.jetbrains.kotlin.jvm'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.9.22'
 }
 
 version = project.mod_version
@@ -33,6 +34,8 @@ dependencies {
     // silkmc
     modImplementation include("net.silkmc:silk-core:${project.silk_version}")
     modImplementation include("net.silkmc:silk-game:${project.silk_version}")
+
+    implementation include("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 
 }
 

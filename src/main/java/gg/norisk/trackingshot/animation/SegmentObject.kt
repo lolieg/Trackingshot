@@ -1,6 +1,8 @@
 package gg.norisk.trackingshot.animation
 
 import gg.norisk.trackingshot.GenericRunnable
+import kotlinx.serialization.Serializable
 
-interface SegmentObject: GenericRunnable {
+@Serializable
+sealed interface SegmentObject: GenericRunnable {
 }

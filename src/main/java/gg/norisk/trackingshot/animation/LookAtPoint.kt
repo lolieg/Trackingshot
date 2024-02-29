@@ -6,14 +6,14 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import net.minecraft.command.argument.EntityAnchorArgumentType
-import net.minecraft.entity.Entity
+import net.minecraft.util.math.Vec3d
 import net.silkmc.silk.core.annotations.DelicateSilkApi
 import net.silkmc.silk.core.task.silkCoroutineScope
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.toJavaDuration
 
-class LookAtEntity(val entity: Entity, val duration: Duration): SegmentObject {
+class LookAtPoint(val point: Vec3d, val duration: Duration): SegmentObject {
 
     @OptIn(DelicateSilkApi::class)
     override suspend fun run(): Job {
@@ -22,7 +22,7 @@ class LookAtEntity(val entity: Entity, val duration: Duration): SegmentObject {
             val camera = getFreeCamera() ?: return@launch
             while (duration.toJavaDuration().toNanos() > System.nanoTime() - startTime) {
                 yield()
-                camera.lookAt(EntityAnchorArgumentType.EntityAnchor.EYES, entity.eyePos)
+                camera.lookAt(EntityAnchorArgumentType.EntityAnchor.EYES, point)
                 delay(10.milliseconds)
             }
         }

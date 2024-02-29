@@ -21,7 +21,6 @@ fun ClientPlayerEntity.exitTrackingShot(trackingShot: TrackingShot) {
     trackingShot.exit()
 }
 
-
 class TrackingShot(val segments: MutableList<Segment>, val autoClose: Boolean) {
     var cancelled = false
     var isDone = false
@@ -70,6 +69,7 @@ class TrackingShot(val segments: MutableList<Segment>, val autoClose: Boolean) {
         MinecraftClient.getInstance().setCameraEntity(MinecraftClient.getInstance().player)
         cameraEntity!!.despawn()
         cameraEntity = null
+        MinecraftClient.getInstance().chunkCullingEnabled = true
         closed = true
 
     }

@@ -10,7 +10,7 @@ import gg.norisk.trackingshot.segments.DelaySegment
 import gg.norisk.trackingshot.segments.Segment
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.network.ClientPlayerEntity
-import net.minecraft.entity.Entity
+import net.minecraft.util.math.Vec3d
 import kotlin.time.Duration
 
 
@@ -27,6 +27,7 @@ inline fun trackingShot(
     autoClose: Boolean = true,
     builder: TrackingShotBuilder.() -> Unit
 ) = TrackingShotBuilder(autoClose).apply(builder).build()
+
 
 @TrackingShotDsl
 class TrackingShotBuilder(val autoClose: Boolean = true) {
@@ -49,46 +50,46 @@ class TrackingShotBuilder(val autoClose: Boolean = true) {
         private fun animateCameraProperty(
             duration: Duration,
             easing: Easing,
-            startValue: (player: ClientPlayerEntity) -> Float,
-            endValue: (player: ClientPlayerEntity) -> Float,
+            startValue: (player: ClientPlayerEntity, camera: FreeCamera) -> Float,
+            endValue: (player: ClientPlayerEntity, camera: FreeCamera) -> Float,
             cameraValueType: FreeCamera.CameraValueType
         ) {
             animations.add(CameraAnimation(startValue, endValue, duration, easing, cameraValueType))
         }
 
         @SegmentDsl
-        fun playerLookAtCamera(duration: Duration, easing: Easing) {
+        fun playerLookAtCamera(duration: Duration) {
             val player = MinecraftClient.getInstance().player
             if(player != null)
                 animations.add(PlayerLookAtCamera(player, duration))
         }
         @SegmentDsl
-        fun lookAtEntityAnimation(entity: Entity, duration: Duration, easing: Easing) {
-            animations.add(LookAtEntity(entity, duration))
+        fun lookAtPointAnimation(point: Vec3d, duration: Duration) {
+            animations.add(LookAtPoint(point, duration))
         }
         @SegmentDsl
-        fun yawAnimation(duration: Duration, easing: Easing, startValue: (player: ClientPlayerEntity) -> Float, endValue: (player: ClientPlayerEntity) -> Float) {
+        fun yawAnimation(duration: Duration, easing: Easing, startValue: (player: ClientPlayerEntity, camera: FreeCamera) -> Float, endValue: (player: ClientPlayerEntity, camera: FreeCamera) -> Float) {
             animateCameraProperty(duration, easing, startValue, endValue, FreeCamera.CameraValueType.YAW)
         }
         @SegmentDsl
-        fun pitchAnimation(duration: Duration, easing: Easing, startValue: (player: ClientPlayerEntity) -> Float, endValue: (player: ClientPlayerEntity) -> Float) {
+        fun pitchAnimation(duration: Duration, easing: Easing, startValue: (player: ClientPlayerEntity, camera: FreeCamera) -> Float, endValue: (player: ClientPlayerEntity, camera: FreeCamera) -> Float) {
             animateCameraProperty(duration, easing, startValue, endValue, FreeCamera.CameraValueType.PITCH)
         }
 
         @SegmentDsl
-        fun zoomAnimation(duration: Duration, easing: Easing, startValue: (player: ClientPlayerEntity) -> Float, endValue: (player: ClientPlayerEntity) -> Float) {
+        fun zoomAnimation(duration: Duration, easing: Easing, startValue: (player: ClientPlayerEntity, camera: FreeCamera) -> Float, endValue: (player: ClientPlayerEntity, camera: FreeCamera) -> Float) {
             animateCameraProperty(duration, easing, startValue, endValue, FreeCamera.CameraValueType.ZOOM)
         }
         @SegmentDsl
-        fun xAnimation(duration: Duration, easing: Easing, startValue: (player: ClientPlayerEntity) -> Float, endValue: (player: ClientPlayerEntity) -> Float) {
+        fun xAnimation(duration: Duration, easing: Easing, startValue: (player: ClientPlayerEntity, camera: FreeCamera) -> Float, endValue: (player: ClientPlayerEntity, camera: FreeCamera) -> Float) {
             animateCameraProperty(duration, easing, startValue, endValue, FreeCamera.CameraValueType.X_COORDINATE)
         }
         @SegmentDsl
-        fun yAnimation(duration: Duration, easing: Easing, startValue: (player: ClientPlayerEntity) -> Float, endValue: (player: ClientPlayerEntity) -> Float) {
+        fun yAnimation(duration: Duration, easing: Easing, startValue: (player: ClientPlayerEntity, camera: FreeCamera) -> Float, endValue: (player: ClientPlayerEntity, camera: FreeCamera) -> Float) {
             animateCameraProperty(duration, easing, startValue, endValue, FreeCamera.CameraValueType.Y_COORDINATE)
         }
         @SegmentDsl
-        fun zAnimation(duration: Duration, easing: Easing, startValue: (player: ClientPlayerEntity) -> Float, endValue: (player: ClientPlayerEntity) -> Float) {
+        fun zAnimation(duration: Duration, easing: Easing, startValue: (player: ClientPlayerEntity, camera: FreeCamera) -> Float, endValue: (player: ClientPlayerEntity, camera: FreeCamera) -> Float) {
             animateCameraProperty(duration, easing, startValue, endValue, FreeCamera.CameraValueType.Z_COORDINATE)
         }
 

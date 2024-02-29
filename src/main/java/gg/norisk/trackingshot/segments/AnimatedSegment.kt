@@ -3,6 +3,8 @@ package gg.norisk.trackingshot.segments
 import gg.norisk.trackingshot.animation.SegmentObject
 import gg.norisk.trackingshot.utils
 import kotlinx.coroutines.Job
+import kotlinx.serialization.Serializable
+
 
 class AnimatedSegment(override val segmentObjects: MutableList<SegmentObject>, override val jobs: MutableList<Job>) : Segment {
 

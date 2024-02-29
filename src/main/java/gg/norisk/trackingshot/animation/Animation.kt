@@ -1,22 +1,23 @@
 package gg.norisk.trackingshot.animation
 
+import gg.norisk.trackingshot.freecam.FreeCamera
 import it.unimi.dsi.fastutil.doubles.Double2DoubleFunction
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.network.ClientPlayerEntity
 import java.time.Duration
 import kotlin.math.*
 
-open class Animation(private val startCallback: (ClientPlayerEntity) -> Float, private val endCallback: (ClientPlayerEntity) -> Float, private var dur: Duration, private val easing: Easing = Easing.LINEAR) {
+open class Animation(private val startCallback: (ClientPlayerEntity, camera: FreeCamera) -> Float, private val endCallback: (ClientPlayerEntity, camera: FreeCamera) -> Float, private var dur: Duration, private val easing: Easing = Easing.LINEAR) {
     private var start = 0f
     private var end = 0f
     private var startTime: Long = System.nanoTime()
     var isForward: Boolean = true
 
-    fun start() {
+    fun start(camera: FreeCamera) {
         val player = MinecraftClient.getInstance().player
         if(player != null) {
-            this.start = startCallback.invoke(player)
-            this.end = endCallback.invoke(player)
+            this.start = startCallback.invoke(player, camera)
+            this.end = endCallback.invoke(player, camera)
         }
         this.startTime = System.nanoTime()
     }

@@ -4,6 +4,7 @@ import gg.norisk.trackingshot.animation.SegmentObject
 import gg.norisk.trackingshot.utils
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.serialization.Serializable
 import kotlin.time.Duration
 
 class DelaySegment(private val delay: Duration,
